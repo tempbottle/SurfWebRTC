@@ -2,6 +2,8 @@
 
 #include "/usr/local/include/rutil/Logger.hxx"
 
+#include "/usr/local/include/resip/dum/ServerInviteSession.hxx"
+
 #define RESIPROCATE_SUBSYSTEM resip::Subsystem::REPRO
 
 using namespace server;
@@ -17,205 +19,217 @@ WsInviteSessionHandler::~WsInviteSessionHandler()
      
 void
 WsInviteSessionHandler::onNewSession(ClientInviteSessionHandle, InviteSession::OfferAnswerType oat, const SipMessage& msg) {
-   InfoLog(<< "WsInviteSessionHandler::onNewSession");
+   DebugLog(<< "WsInviteSessionHandler::onNewSession");
 }
 
 void
-WsInviteSessionHandler::onNewSession(ServerInviteSessionHandle, InviteSession::OfferAnswerType oat, const SipMessage& msg) {
-   InfoLog(<< "WsInviteSessionHandler::onNewSession");
+WsInviteSessionHandler::onNewSession(ServerInviteSessionHandle sis, InviteSession::OfferAnswerType oat, const SipMessage& msg) {
+   DebugLog(<< "WsInviteSessionHandler::onNewSession");
+   DebugLog(<< "ServerInviteSession-onNewSession - " << msg.brief());
+   DebugLog(<< "Sending 180 Ringing response");
+   mSis = sis;
+   sis->provisional(180);
 }
 
 void
 WsInviteSessionHandler::onFailure(ClientInviteSessionHandle, const SipMessage& msg) {
-   InfoLog(<< "WsInviteSessionHandler::onFailure");
+   DebugLog(<< "WsInviteSessionHandler::onFailure");
 }
 
 void
 WsInviteSessionHandler::onEarlyMedia(ClientInviteSessionHandle, const SipMessage&, const SdpContents&) {
-   InfoLog(<< "WsInviteSessionHandler::onEarlyMedia");
+   DebugLog(<< "WsInviteSessionHandler::onEarlyMedia");
 }
 
 void
 WsInviteSessionHandler::onEarlyMedia(ClientInviteSessionHandle, const SipMessage&, const Contents&) {
-   InfoLog(<< "WsInviteSessionHandler::onEarlyMedia");
+   DebugLog(<< "WsInviteSessionHandler::onEarlyMedia");
 }
 
 void
 WsInviteSessionHandler::onProvisional(ClientInviteSessionHandle, const SipMessage&) {
-   InfoLog(<< "WsInviteSessionHandler::onProvisional");
+   DebugLog(<< "WsInviteSessionHandler::onProvisional");
 }
 
 void
 WsInviteSessionHandler::onConnected(ClientInviteSessionHandle, const SipMessage& msg) {
-   InfoLog(<< "WsInviteSessionHandler::onConnected");
+   DebugLog(<< "WsInviteSessionHandler::onConnected");
 }
 
 void
 WsInviteSessionHandler::onConnected(InviteSessionHandle, const SipMessage& msg) {
-   InfoLog(<< "WsInviteSessionHandler::onConnected");
+   DebugLog(<< "WsInviteSessionHandler::onConnected");
 }
 
 void
 WsInviteSessionHandler::onConnectedConfirmed(InviteSessionHandle, const SipMessage &msg) {
-   InfoLog(<< "WsInviteSessionHandler::onConnectedConfirmed");
+   DebugLog(<< "WsInviteSessionHandler::onConnectedConfirmed");
 }
 
 void
 WsInviteSessionHandler::onPrack(ServerInviteSessionHandle, const SipMessage &msg) {
-   InfoLog(<< "WsInviteSessionHandler::onPrack");
+   DebugLog(<< "WsInviteSessionHandler::onPrack");
 }
 
 void
 WsInviteSessionHandler::onStaleCallTimeout(ClientInviteSessionHandle h) {
-   InfoLog(<< "WsInviteSessionHandler::onStaleCallTimeout");
+   DebugLog(<< "WsInviteSessionHandler::onStaleCallTimeout");
 }
 
 void
 WsInviteSessionHandler::terminate(ClientInviteSessionHandle h) {
-   InfoLog(<< "WsInviteSessionHandler::terminate");
+   DebugLog(<< "WsInviteSessionHandler::terminate");
 }
 
 void
-WsInviteSessionHandler::onTerminated(InviteSessionHandle, InviteSessionHandler::TerminatedReason reason, const SipMessage* related) {
-   InfoLog(<< "WsInviteSessionHandler::onTerminated");
+WsInviteSessionHandler::onTerminated(InviteSessionHandle is, InviteSessionHandler::TerminatedReason reason, const SipMessage* related) {
+   DebugLog(<< "WsInviteSessionHandler::onTerminated");
+   DebugLog(<< "ServerInviteSession-onTerminated");
 }
 
 void
 WsInviteSessionHandler::onForkDestroyed(ClientInviteSessionHandle) {
-   InfoLog(<< "WsInviteSessionHandler::onForkDestroyed");
+   DebugLog(<< "WsInviteSessionHandler::onForkDestroyed");
 }
 
 void
 WsInviteSessionHandler::onRedirected(ClientInviteSessionHandle, const SipMessage& msg) {
-   InfoLog(<< "WsInviteSessionHandler::onRedirected");
+   DebugLog(<< "WsInviteSessionHandler::onRedirected");
 }
 
 void
 WsInviteSessionHandler::onReadyToSend(InviteSessionHandle, SipMessage& msg) {
-   InfoLog(<< "WsInviteSessionHandler::onReadyToSend");
+   DebugLog(<< "WsInviteSessionHandler::onReadyToSend");
 }
 
 void
 WsInviteSessionHandler::onAnswer(InviteSessionHandle, const SipMessage& msg, const SdpContents&) {
-   InfoLog(<< "WsInviteSessionHandler::onAnswer");
+   DebugLog(<< "WsInviteSessionHandler::onAnswer");
 }
 
 void
 WsInviteSessionHandler::onAnswer(InviteSessionHandle, const SipMessage& msg, const Contents&) {
-   InfoLog(<< "WsInviteSessionHandler::onAnswer");
+   DebugLog(<< "WsInviteSessionHandler::onAnswer");
 }
 
 void
-WsInviteSessionHandler::onOffer(InviteSessionHandle, const SipMessage& msg, const SdpContents&) {
-   InfoLog(<< "WsInviteSessionHandler::onOffer");
+WsInviteSessionHandler::onOffer(InviteSessionHandle is, const SipMessage& msg, const SdpContents& sdp) {
+   DebugLog(<< "WsInviteSessionHandler::onOffer");
 }      
 
 void
-WsInviteSessionHandler::onOffer(InviteSessionHandle, const SipMessage& msg, const Contents&) {
-   InfoLog(<< "WsInviteSessionHandler::onOffer");
+WsInviteSessionHandler::onOffer(InviteSessionHandle is, const SipMessage& msg, const Contents& sdp) {
+   DebugLog(<< "WsInviteSessionHandler::onOffer");
+   DebugLog(<< "ServerInviteSession-onNewSession-onOffer(SDP)");
+#ifdef SDP_PRINT
+   sdp->encode(cout);
+#endif
+   DebugLog(<< "Sending 200 respond with SDP answer");
+   is->provideAnswer(sdp);
+   mSis->accept();
 }      
 
 void
 WsInviteSessionHandler::onRemoteSdpChanged(InviteSessionHandle, const SipMessage& msg, const SdpContents&) {
-   InfoLog(<< "WsInviteSessionHandler::onRemoteSdpChanged");
+   DebugLog(<< "WsInviteSessionHandler::onRemoteSdpChanged");
 }
 
 void
 WsInviteSessionHandler::onRemoteAnswerChanged(InviteSessionHandle, const SipMessage& msg, const Contents&) {
-   InfoLog(<< "WsInviteSessionHandler::onRemoteAnswerChanged");
+   DebugLog(<< "WsInviteSessionHandler::onRemoteAnswerChanged");
 }  
 
 void
 WsInviteSessionHandler::onOfferRequestRejected(InviteSessionHandle, const SipMessage& msg) {
-   InfoLog(<< "WsInviteSessionHandler::onOfferRequestRejected");
+   DebugLog(<< "WsInviteSessionHandler::onOfferRequestRejected");
 }
 
 void
 WsInviteSessionHandler::onOfferRequired(InviteSessionHandle, const SipMessage& msg) {
-   InfoLog(<< "WsInviteSessionHandler::onOfferRequired");
+   DebugLog(<< "WsInviteSessionHandler::onOfferRequired");
 }      
 
 void
 WsInviteSessionHandler::onOfferRejected(InviteSessionHandle, const SipMessage* msg) {
-   InfoLog(<< "WsInviteSessionHandler::onOfferRejected");
+   DebugLog(<< "WsInviteSessionHandler::onOfferRejected");
 }
 
 void
 WsInviteSessionHandler::onInfo(InviteSessionHandle, const SipMessage& msg) {
-   InfoLog(<< "WsInviteSessionHandler::onInfo");
+   DebugLog(<< "WsInviteSessionHandler::onInfo");
 }
 
 void
 WsInviteSessionHandler::onInfoSuccess(InviteSessionHandle, const SipMessage& msg) {
-   InfoLog(<< "WsInviteSessionHandler::onInfoSuccess");
+   DebugLog(<< "WsInviteSessionHandler::onInfoSuccess");
 }
 
 void
 WsInviteSessionHandler::onInfoFailure(InviteSessionHandle, const SipMessage& msg) {
-   InfoLog(<< "WsInviteSessionHandler::onInfoFailure");
+   DebugLog(<< "WsInviteSessionHandler::onInfoFailure");
 }
 
 void
 WsInviteSessionHandler::onMessage(InviteSessionHandle, const SipMessage& msg) {
-   InfoLog(<< "WsInviteSessionHandler::onMessage");
+   DebugLog(<< "WsInviteSessionHandler::onMessage");
 }
 
 void
 WsInviteSessionHandler::onMessageSuccess(InviteSessionHandle, const SipMessage& msg) {
-   InfoLog(<< "WsInviteSessionHandler::onMessageSuccess");
+   DebugLog(<< "WsInviteSessionHandler::onMessageSuccess");
 }
 
 void
 WsInviteSessionHandler::onMessageFailure(InviteSessionHandle, const SipMessage& msg) {
-   InfoLog(<< "WsInviteSessionHandler::onMessageFailure");
+   DebugLog(<< "WsInviteSessionHandler::onMessageFailure");
 }
 
 void
 WsInviteSessionHandler::onRefer(InviteSessionHandle, ServerSubscriptionHandle, const SipMessage& msg) {
-   InfoLog(<< "WsInviteSessionHandler::onRefer");
+   DebugLog(<< "WsInviteSessionHandler::onRefer");
 }
 
 void
 WsInviteSessionHandler::onReferNoSub(InviteSessionHandle, const SipMessage& msg) {
-   InfoLog(<< "WsInviteSessionHandler::onReferNoSub");
+   DebugLog(<< "WsInviteSessionHandler::onReferNoSub");
 }
 
 void
 WsInviteSessionHandler::onReferRejected(InviteSessionHandle, const SipMessage& msg) {
-   InfoLog(<< "WsInviteSessionHandler::onReferRejected");
+   DebugLog(<< "WsInviteSessionHandler::onReferRejected");
 }
 
 void
 WsInviteSessionHandler::onReferAccepted(InviteSessionHandle, ClientSubscriptionHandle, const SipMessage& msg) {
-   InfoLog(<< "WsInviteSessionHandler::onReferAccepted");
+   DebugLog(<< "WsInviteSessionHandler::onReferAccepted");
 }
 
 void
 WsInviteSessionHandler::onAckReceived(InviteSessionHandle, const SipMessage& msg) {
-   InfoLog(<< "WsInviteSessionHandler::onAckReceived");
+   DebugLog(<< "WsInviteSessionHandler::onAckReceived");
 }
 
 void
 WsInviteSessionHandler::onAckNotReceived(InviteSessionHandle) {
-   InfoLog(<< "WsInviteSessionHandler::onAckNotReceived");
+   DebugLog(<< "WsInviteSessionHandler::onAckNotReceived");
 }
 
 void
 WsInviteSessionHandler::onStaleReInviteTimeout(InviteSessionHandle h) {
-   InfoLog(<< "WsInviteSessionHandler::onStaleReInviteTimeout");
+   DebugLog(<< "WsInviteSessionHandler::onStaleReInviteTimeout");
 }
 
 void
 WsInviteSessionHandler::onIllegalNegotiation(InviteSessionHandle, const SipMessage& msg) {
-   InfoLog(<< "WsInviteSessionHandler::onIllegalNegotiation");
+   DebugLog(<< "WsInviteSessionHandler::onIllegalNegotiation");
 }     
 
 void
 WsInviteSessionHandler::onSessionExpired(InviteSessionHandle) {
-   InfoLog(<< "WsInviteSessionHandler::onSessionExpired");
+   DebugLog(<< "WsInviteSessionHandler::onSessionExpired");
 }
 
 void
 WsInviteSessionHandler::onFlowTerminated(InviteSessionHandle) {
-   InfoLog(<< "WsInviteSessionHandler::onFlowTerminated");
+   DebugLog(<< "WsInviteSessionHandler::onFlowTerminated");
 }

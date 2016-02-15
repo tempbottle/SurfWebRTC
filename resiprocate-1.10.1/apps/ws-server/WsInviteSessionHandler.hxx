@@ -102,6 +102,9 @@ public:
    virtual void onSessionExpired(InviteSessionHandle);
 
    virtual void onFlowTerminated(InviteSessionHandle);
+
+private:
+   ServerInviteSessionHandle mSis;
 };
 }
 
