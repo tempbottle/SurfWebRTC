@@ -4,13 +4,17 @@
 
 #include "/usr/local/include/resip/dum/ServerInviteSession.hxx"
 
+#include "/usr/local/include/resip/stack/Contents.hxx"
+
 #define RESIPROCATE_SUBSYSTEM resip::Subsystem::REPRO
 
 using namespace server;
+using namespace std;
 
 
 WsInviteSessionHandler::WsInviteSessionHandler()
 {
+   mCallCount = 0;
 }
 
 WsInviteSessionHandler::~WsInviteSessionHandler()
@@ -26,8 +30,18 @@ void
 WsInviteSessionHandler::onNewSession(ServerInviteSessionHandle sis, InviteSession::OfferAnswerType oat, const SipMessage& msg) {
    DebugLog(<< "WsInviteSessionHandler::onNewSession");
    DebugLog(<< "ServerInviteSession-onNewSession - " << msg.brief());
+
+   // Increment call count
+   mCallCount++;
+
+   // Save server invite session handles
+   if (mCallCount == 1) {
+      mSisFirstCaller = sis;
+   } else if (mCallCount == 2) {
+      mSisSecondCaller = sis;
+   }
+
    DebugLog(<< "Sending 180 Ringing response");
-   mSis = sis;
    sis->provisional(180);
 }
 
@@ -121,12 +135,16 @@ void
 WsInviteSessionHandler::onOffer(InviteSessionHandle is, const SipMessage& msg, const Contents& sdp) {
    DebugLog(<< "WsInviteSessionHandler::onOffer");
    DebugLog(<< "ServerInviteSession-onNewSession-onOffer(SDP)");
-#ifdef SDP_PRINT
-   sdp->encode(cout);
-#endif
-   DebugLog(<< "Sending 200 respond with SDP answer");
-   is->provideAnswer(sdp);
-   mSis->accept();
+
+   // Save SDP & Invite session handles
+   if (mCallCount == 1) {
+      mInviteSessionHandleFirstCaller = is;
+      mSdpFirstCaller = reinterpret_cast<SdpContents *>(sdp.clone()); 
+   } else if (mCallCount == 2) {
+      mInviteSessionHandleSecondCaller = is;
+      mSdpSecondCaller = reinterpret_cast<SdpContents *>(sdp.clone()); 
+      bridge();
+   }
 }      
 
 void
@@ -232,4 +250,14 @@ WsInviteSessionHandler::onSessionExpired(InviteSessionHandle) {
 void
 WsInviteSessionHandler::onFlowTerminated(InviteSessionHandle) {
    DebugLog(<< "WsInviteSessionHandler::onFlowTerminated");
+}
+
+void
+WsInviteSessionHandler::bridge() {
+   // Bridge the calls
+   mInviteSessionHandleFirstCaller->provideAnswer(*mSdpSecondCaller);
+   mSisFirstCaller->accept();
+
+   mInviteSessionHandleSecondCaller->provideAnswer(*mSdpFirstCaller);
+   mSisSecondCaller->accept();
 }

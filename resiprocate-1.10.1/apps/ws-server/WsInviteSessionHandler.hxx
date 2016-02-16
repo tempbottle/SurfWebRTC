@@ -17,7 +17,7 @@ namespace server
 class WsInviteSessionHandler : public resip::InviteSessionHandler 
 {
 public:
-   WsInviteSessionHandler();
+   WsInviteSessionHandler(); 
 
    ~WsInviteSessionHandler();
         
@@ -103,8 +103,17 @@ public:
 
    virtual void onFlowTerminated(InviteSessionHandle);
 
+   void bridge();
+
 private:
    ServerInviteSessionHandle mSis;
+   ServerInviteSessionHandle mSisFirstCaller;
+   ServerInviteSessionHandle mSisSecondCaller;
+   SdpContents *mSdpFirstCaller;
+   SdpContents *mSdpSecondCaller;
+   InviteSessionHandle mInviteSessionHandleFirstCaller;   
+   InviteSessionHandle mInviteSessionHandleSecondCaller;   
+   int mCallCount;
 };
 }
 
