@@ -14,6 +14,7 @@ using namespace std;
 
 WsInviteSessionHandler::WsInviteSessionHandler()
 {
+   // Initialise 
    mCallCount = 0;
 }
 
@@ -99,6 +100,16 @@ void
 WsInviteSessionHandler::onTerminated(InviteSessionHandle is, InviteSessionHandler::TerminatedReason reason, const SipMessage* related) {
    DebugLog(<< "WsInviteSessionHandler::onTerminated");
    DebugLog(<< "ServerInviteSession-onTerminated");
+   
+   // Decrement active call count
+   mCallCount--;
+
+   // Hung up both bridged calls if one of them hangs the call
+   if (is == mInviteSessionHandleFirstCaller) {
+           mInviteSessionHandleSecondCaller->end();
+   } else if (is == mInviteSessionHandleSecondCaller) {
+           mInviteSessionHandleFirstCaller->end();
+   }
 }
 
 void

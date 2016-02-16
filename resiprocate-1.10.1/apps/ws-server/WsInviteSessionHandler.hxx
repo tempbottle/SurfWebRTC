@@ -106,7 +106,6 @@ public:
    void bridge();
 
 private:
-   ServerInviteSessionHandle mSis;
    ServerInviteSessionHandle mSisFirstCaller;
    ServerInviteSessionHandle mSisSecondCaller;
    SdpContents *mSdpFirstCaller;
